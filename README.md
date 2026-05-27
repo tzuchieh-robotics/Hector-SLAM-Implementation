@@ -125,11 +125,15 @@ By minimizing F, we find the pose where scan points best align with occupied cel
 
 The pose is optimized using Gauss-Newton, where the gradient is obtained by taking the partial derivative of F with respect to x, y, and θ:
 
-$$\frac{\partial F}{\partial \mathbf{p}} = \sum_{i=1}^{n} 2\left[1 - M(S_i)\right] \cdot \nabla M(S_i) \cdot \frac{\partial S_i}{\partial \mathbf{p}}$$
+$$\mathbf{J}_i = \begin{bmatrix} \frac{\partial M}{\partial x} & \frac{\partial M}{\partial y} & \frac{\partial M}{\partial x}\cdot\frac{\partial w_x}{\partial \theta} + \frac{\partial M}{\partial y}\cdot\frac{\partial w_y}{\partial \theta} \end{bmatrix}$$
 
 where:
 
-$$\frac{\partial S_i}{\partial \mathbf{p}} = \begin{bmatrix} 1 & 0 & -r_i \sin(\theta + \alpha_i) \\ 0 & 1 & r_i \cos(\theta + \alpha_i) \end{bmatrix}$$
+$$\frac{\partial w_x}{\partial \theta} = -r_i \sin(\theta + \alpha_i), \quad \frac{\partial w_y}{\partial \theta} = r_i \cos(\theta + \alpha_i)$$
+
+The Gauss-Newton update is then:
+
+$$\Delta \mathbf{p} = \left(\sum_i \mathbf{J}_i^\top \mathbf{J}_i\right)^{-1} \sum_i \mathbf{J}_i^\top \left[1 - M(S_i)\right]$$
 
 4.Map Update
 5.Down Sampling
