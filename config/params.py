@@ -2,7 +2,7 @@
 
 # ===== Map Configuration =====
 FINE_RESOLUTION = 0.05  # meters per cell
-COARSE_RESOLUTION = 0.10  # 2x downsampled
+COARSE_RESOLUTION = 0.40  # 2x downsampled
 
 MAP_ORIGIN = (-6.0, -1.0)
 INITIAL_MAP_SIZE = 400
@@ -16,8 +16,8 @@ LOG_ODDS_MAX = 3.5
 # ===== Motion Model =====
 KEYBOARD_SCALE = 0.05  # movement per key press (meters)
 ROTATION_SCALE = 0.1  # rotation per key press (radians)
-IMU_NOISE_LINEAR = 0.05  # meters
-IMU_NOISE_ANGULAR = 0.05  # radians
+IMU_NOISE_LINEAR = 0.001  # meters
+IMU_NOISE_ANGULAR = 0.001  # radians
 
 # ===== Laser Configuration =====
 NUM_RAYS = 360

@@ -62,7 +62,7 @@ def gn_optimize(pose_initial: Pose, occupancy_map: OccupancyGrid,
 
         # clamp
         trans = np.linalg.norm(delta[:2])
-        clamp_val = 0.5
+        clamp_val = 2.0
         if trans > clamp_val:
             delta[:2] *= clamp_val / trans
         delta[2] = np.clip(delta[2], -clamp_val, clamp_val)

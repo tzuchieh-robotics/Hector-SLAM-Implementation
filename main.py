@@ -306,9 +306,9 @@ def on_press(event):
     if event.key == 'escape':
         plt.close(); sys.exit(0)
     if event.key == 'r':
-        gt_pose    = Pose(0, 2, 0)
-        slam_pose  = Pose(0, 2, 0)
-        prev_pose  = Pose(0, 2, 0)
+        gt_pose    = Pose(0, 6, 0)
+        slam_pose  = Pose(0, 6, 0)
+        prev_pose  = Pose(0, 6, 0)
         fine_map   = OccupancyGrid(FINE_RESOLUTION, origin=MAP_ORIGIN)
         coarse_map = fine_map.downsample()
         step       = 0
