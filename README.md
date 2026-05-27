@@ -1,6 +1,6 @@
 # Hector SLAM — Local Simulation
 
-A Python implementation of [Hector SLAM](http://www.ares.tu-darmstadt.de/) as an interactive local simulation. Drive a virtual robot with the keyboard and watch it build a 2D occupancy map in real time.
+This repo demonstrate the workflow of Hector SLAM by driving a virtual robot with the keyboard and watch it build a 2D occupancy map in real time.
 
 ## Demo
 
@@ -68,20 +68,71 @@ python -m pytest tests/
 ```
 Keyboard Input
     ↓
-Motion Update        (1) predict pose from velocity
+Motion Update            (1) predict pose from velocity
     ↓
-Ray Casting          (2) expected scan from current map
+GN Optimize ×2 + 
+LiDAR Measurement Score  (2) refine pose on coarse then fine map by looking up the map score against real scan
     ↓
-Lidar Measurement    (3) score pose against real scan
+Map Update               (3) integrate scan into occupancy grid (fine map)
     ↓
-GN Optimize ×2       (4) refine pose on coarse then fine map
-    ↓
-Map Update           (5) integrate scan into occupancy grid
-    ↓
-Down Sampling        (6) sync coarse map from fine map
+Down Sampling            (4) sync coarse map from fine map for next iteration
     ↓
 Visualization
 ```
+
+1. Motion Update
+   The robot here is a differential drive robot with kinematics below.
+   ## Robot model — differential drive
+    <table>
+    <tr>
+    <td>
+    <img width="316" height="227" alt="differential drive" src="https://github.com/user-attachments/assets/39bdbe7c-f2ee-44b5-8d32-eb03b0a02256" />
+    </td>
+    <td>
+    
+    | Symbol | Meaning |
+    |--------|---------|
+    | vx | forward velocity (robot frame) |
+    | vy | lateral velocity (robot frame) |
+    | ω | angular velocity |
+    | θ | robot heading |
+    
+    **State update (Euler integration):**
+    <pre>
+    x     ← x + (vx·cos(θ) − vy·sin(θ))·dt
+    y     ← y + (vx·sin(θ) + vy·cos(θ))·dt
+    theta ← theta + ω·dt
+    </pre>
+    
+    </td>
+    </tr>
+    </table>
+
+
+3.GN (Gaussian Newton) Optimization
+
+<div align="center">
+  <img width="400" height="300" alt="image" src="https://github.com/user-attachments/assets/07d97fc8-87f5-46b6-a69b-5b6dec932ed0" />
+</div>
+
+The cost function is:
+
+$$F(\mathbf{p}) = \sum_{i=1}^{n} \left[1 - M\left(S_i(\mathbf{p})\right)\right]^2$$
+
+where **p** = (x, y, θ) is the estimated robot pose, S_i(**p**) is the projection function that transforms scan points from robot frame to world coordinates, and M(·) is the occupancy probability from either the coarse or fine map.
+
+By minimizing F, we find the pose where scan points best align with occupied cells in the current map.
+
+The pose is optimized using Gauss-Newton, where the gradient is obtained by taking the partial derivative of F with respect to x, y, and θ:
+
+$$\frac{\partial F}{\partial \mathbf{p}} = \sum_{i=1}^{n} 2\left[1 - M(S_i)\right] \cdot \nabla M(S_i) \cdot \frac{\partial S_i}{\partial \mathbf{p}}$$
+
+where:
+
+$$\frac{\partial S_i}{\partial \mathbf{p}} = \begin{bmatrix} 1 & 0 & -r_i \sin(\theta + \alpha_i) \\ 0 & 1 & r_i \cos(\theta + \alpha_i) \end{bmatrix}$$
+
+4.Map Update
+5.Down Sampling
 
 **Two-level refinement**: Gauss-Newton runs on the coarse map first (fast, wide basin), then uses that result to initialize on the fine map (precise).
 
