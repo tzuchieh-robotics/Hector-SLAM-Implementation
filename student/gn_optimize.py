@@ -6,12 +6,10 @@ from config.params import *
 def gn_optimize(pose_initial: Pose, occupancy_map: OccupancyGrid,
                 matched_points, max_iterations: int = GN_MAX_ITERATIONS) -> Pose:
 
-    print("Hello from gn_optimization1")
 
     pose = pose_initial.copy()
     res = occupancy_map.resolution
 
-    print("Hello from gn_optimization2")
 
     # 把 LaserScan 轉成世界座標點
     world_pts = np.array([
@@ -20,7 +18,6 @@ def gn_optimize(pose_initial: Pose, occupancy_map: OccupancyGrid,
         if r < LASER_RANGE_MAX - 0.01
     ])
 
-    print("Hello from gn_optimization3")
 
     if len(world_pts) == 0:
         return pose_initial.copy()
@@ -30,7 +27,6 @@ def gn_optimize(pose_initial: Pose, occupancy_map: OccupancyGrid,
         pose_initial.inverse_transform_point(pt) for pt in world_pts
     ])
 
-    print("Hello from gn_optimization4")
 
     count = 0
     for i in range(max_iterations):
