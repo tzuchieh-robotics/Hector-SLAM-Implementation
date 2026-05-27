@@ -1,5 +1,5 @@
 <div align="center">
-<img width="668" height="610" alt="2026-05-26212712-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/3ccc1f0a-0a8c-4f5a-9a2b-279e7630d8e0" />
+<img width="500" height="500" alt="2026-05-26212712-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/3ccc1f0a-0a8c-4f5a-9a2b-279e7630d8e0" />
 </div>
 
 
